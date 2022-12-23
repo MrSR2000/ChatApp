@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DatabaseService {
   final String? uid;
@@ -125,5 +126,16 @@ class DatabaseService {
         "members": FieldValue.arrayUnion(["${uid}_$userName"])
       });
     }
+  }
+
+  //send message
+  sendMessage(String groupId, Map<String, dynamic> chatMessageData) {
+    groupCollection.doc(groupId).collection("messages").add(chatMessageData);
+    print('added to messages');
+    groupCollection.doc(groupId).update({
+      "recentMessage": chatMessageData['message'],
+      "recentMessageSender": chatMessageData['sender'],
+      "recentMessageTime": chatMessageData['time'].toString(),
+    });
   }
 }
