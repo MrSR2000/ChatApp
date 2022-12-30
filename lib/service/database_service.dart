@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 
 class DatabaseService {
   final String? uid;
@@ -46,6 +49,8 @@ class DatabaseService {
       "groupId": "",
       "recentMessage": "",
       "recentMessageSender": "",
+      "isImage": false,
+      "imgUrl": ''
     });
 
     await documentReference.update({
@@ -64,7 +69,7 @@ class DatabaseService {
     return groupCollection
         .doc(groupId)
         .collection("messages")
-        .orderBy("time")
+        .orderBy("time", descending: false)
         .snapshots();
   }
 
@@ -74,6 +79,28 @@ class DatabaseService {
     DocumentSnapshot documentSnapshot = await d.get();
     print('document snpashot is $documentSnapshot');
     return documentSnapshot['admin'];
+  }
+
+  Future<bool> isImg(String groupId) async {
+    DocumentReference docData = groupCollection.doc(groupId);
+    DocumentSnapshot documentSnapshot = await docData.get();
+
+    List<dynamic> isImg = await documentSnapshot['isImage'];
+
+    if (isImg.contains(true)) {
+      return true;
+    } else {
+      return false;
+    }
+    // final snapshot = await docData.get();
+
+    // if (snapshot.exists) {
+    //   Object User = snapshot.data()!;
+    //   // print(User);
+    //   // print('decoded : ${jsonDecode(User.toString())}');
+    //   // print("The snapshot is : ${snapshot.data()}");
+    //   // Map<String, dynamic> jsonData = json.decode(User) as Map<String, dynamic>;
+    // }
   }
 
   //get group members
@@ -129,13 +156,27 @@ class DatabaseService {
   }
 
   //send message
-  sendMessage(String groupId, Map<String, dynamic> chatMessageData) {
+  sendMessage(
+      String groupId, Map<String, dynamic> chatMessageData, String type) {
     groupCollection.doc(groupId).collection("messages").add(chatMessageData);
     print('added to messages');
-    groupCollection.doc(groupId).update({
-      "recentMessage": chatMessageData['message'],
-      "recentMessageSender": chatMessageData['sender'],
-      "recentMessageTime": chatMessageData['time'].toString(),
-    });
+    if (type == "text") {
+      groupCollection.doc(groupId).update({
+        "recentMessage": chatMessageData['message'],
+        "recentMessageSender": chatMessageData['sender'],
+        "recentMessageTime": chatMessageData['time'].toString(),
+        "isImage": false,
+        "imgUrl": "",
+      });
+    } else if (type == "img") {
+      groupCollection.doc(groupId).update({
+        "recentMessage": "",
+        "recentMessageSender": chatMessageData['sender'],
+        "recentMessageTime": chatMessageData['time'].toString(),
+        // "type": "img",
+        "isImage": true,
+        "imgUrl": chatMessageData['imgUrl'],
+      });
+    }
   }
 }

@@ -167,7 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Text(
                 widget.email,
                 style: const TextStyle(fontSize: 18),
-              )
+              ),
             ],
           ),
         ]),

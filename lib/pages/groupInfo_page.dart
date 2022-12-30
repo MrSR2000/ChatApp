@@ -39,6 +39,7 @@ class _GroupInfoState extends State<GroupInfo> {
         .getGroupMembers(widget.groupId)
         .then((value) {
       setState(() {
+        print(value);
         members = value;
       });
     });

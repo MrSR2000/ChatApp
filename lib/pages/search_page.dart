@@ -181,7 +181,7 @@ class _SearchPageState extends State<SearchPage> {
       ),
       trailing: InkWell(
         onTap: () async {
-          print("reached here?");
+          // print("reached here?");
           await DatabaseService(uid: user!.uid)
               .toggleGroupJoin(groupId, userName, groupName);
 

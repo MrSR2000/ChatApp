@@ -8,6 +8,7 @@ class Constants {
 
   final primaryColor = Color.fromARGB(255, 0, 76, 63);
   // final primaryColor = Color.fromARGB(255, 41, 40, 40);
+  final secondaryColor = Color.fromARGB(255, 79, 139, 128);
 }
 
 
